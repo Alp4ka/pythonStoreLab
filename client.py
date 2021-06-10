@@ -89,10 +89,28 @@ def menu_view():
     else:
         exit()
 
+# TODO
+def logged_menu():
+    clear_screen()
+    print(f"-------{manager.current_user.login}\n1. Shop\n2. Sign In\n3. Exit")
+    values = ['1', '2', '3']
+    pressed = None
+    while pressed is None:
+        pressed = input()
+    if pressed == '1':
+        register_view()
+    elif pressed == '2':
+        login_view()
+    else:
+        exit()
 
 def main():
     global manager
     manager = Manager()
-    menu_view()
+    product = manager.read_products()[-2]
+    product.name = "Kashtani"
+    product.amount = 12
+    manager.save_record(product)
+    #menu_view()
 
 main()

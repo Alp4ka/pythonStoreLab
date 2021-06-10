@@ -7,9 +7,7 @@ class Product:
 
     @staticmethod
     def is_equal(product1, product2):
-        if product1.name == product2.name and \
-                product1.price == product2.price and \
-                product1.amount == product2.amount:
+        if product1.id == product2.id:
             return True
         return False
 

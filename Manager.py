@@ -61,10 +61,11 @@ class Manager:
         if len(splitted) < 3:
             return None
         else:
-            name = splitted[0]
-            login = splitted[1]
-            password = splitted[2]
-            return User(name, login, password)
+            id = splitted[0]
+            name = splitted[1]
+            login = splitted[2]
+            password = splitted[3]
+            return User(id, name, login, password)
 
     @staticmethod
     def parse_order(line):
@@ -75,9 +76,11 @@ class Manager:
         else:
             id = int(splitted[0])
             owner = splitted[1]
-            creation_date = datetime.datetime.strptime(splitted[2], "%d.%m.%Y").date()
+            creation_date = datetime.datetime.strptime(splitted[2],
+                                                       "%d.%m.%Y").date()
             status = OrderStatus(int(splitted[3]))
-            products = [Manager.product_from_id(int(product)) for product in splitted[4].split()]
+            products = [Manager.product_from_id(int(product))
+                        for product in splitted[4].split()]
             return Order(id, owner, creation_date, status, products)
 
     @staticmethod
@@ -107,34 +110,51 @@ class Manager:
         record = ""
         if isinstance(object, User):
             path = USERS_PATH
-            record = object.db_representation()
         elif isinstance(object, Product):
             path = PRODUCTS_PATH
-            record = object.db_representation()
-        elif isinstance(object, Product):
+        elif isinstance(object, Order):
             path = ORDERS_PATH
-            record = object.db_representation()
         else:
             return
+        record = object.db_representation()
         with open(path, "a") as file:
-            file.write(record+"\n")
+            file.write(record + "\n")
 
     def register(self, login, name, password):
         users = self.read_users()
         similar = [user for user in users if user.login == login]
+        new_id = len(users)+1
         if len(similar) > 0:
             raise Exception("Already a user with such a login!")
         else:
             if User.check_password(password):
                 real_password = User.encode(password)
-                user = User(name, login, real_password)
+                user = User(new_id, name, login, real_password)
                 self.create_record(user)
                 return True
             else:
                 raise Exception("Strange password!")
 
-    # TODO
-    def save(self, object):
-        pass
-
-
+    @staticmethod
+    def save_record(self, object):
+        path = ""
+        records = ""
+        if isinstance(object, User):
+            path = USERS_PATH
+            records = Manager.read_users()
+        elif isinstance(object, Product):
+            path = PRODUCTS_PATH
+            records = Manager.read_products()
+        elif isinstance(object, Order):
+            path = ORDERS_PATH
+            records = Manager.read_orders()
+        else:
+            return
+        for i in range(len(records)):
+            if object.is_equal(records[i], object):
+                records[i] = object
+                with open(path, 'w') as f:
+                    f.write('')
+                break
+        for record in records:
+            Manager.create_record(record)

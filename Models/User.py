@@ -4,7 +4,8 @@ import Manager
 
 
 class User:
-    def __init__(self, name, login, password):
+    def __init__(self, id, name, login, password):
+        self.id = id
         self.name = name
         self.login = login
         self.password = password
@@ -15,19 +16,17 @@ class User:
         return my_orders
 
     def __str__(self):
-        return f"###User### Login: '{self.login}' Name: '{self.name}'"
+        return f"###User### Id: '{self.id}'. Login: '{self.login}' Name: '{self.name}'"
 
     def __repr__(self):
-        return f"###User### Login: '{self.login}' Name: '{self.name}' Password: '{self.password}'"
+        return self.__str__ + " Password: '{self.password}'"
 
     def db_representation(self):
-        return f"{self.name};{self.login};{self.password}"
+        return f"{self.id};{self.name};{self.login};{self.password}"
 
     @staticmethod
     def is_equal(user1, user2):
-        if user1.name == user2.name and \
-                user1.login == user2.login and \
-                user1.password == user2.password:
+        if user1.id == user2.id:
             return True
         return False
 

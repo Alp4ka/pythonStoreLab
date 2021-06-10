@@ -19,9 +19,7 @@ class Order:
 
     @staticmethod
     def is_equal(order1, order2):
-        if order1.id == order2.id and \
-                order1.creation_date == order2.creation_date and \
-                order1.status == order2.status:
+        if order1.id == order2.id:
             return True
         return False
 
