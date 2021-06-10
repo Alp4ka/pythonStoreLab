@@ -1,0 +1,3 @@
+1;pomidori;100;7
+2;babani;110;1
+3;ogurzi;170;3
