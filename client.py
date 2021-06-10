@@ -64,7 +64,7 @@ def login_view():
             response = False
     print(f"Logged in as {manager.current_user}")
     input("<Any key to continue>")
-    menu_view()
+    logged_menu()
 
 
 def clear_screen():
@@ -82,6 +82,9 @@ def menu_view():
     pressed = None
     while pressed is None:
         pressed = input()
+        if pressed not in values:
+            pressed = None
+            print("No such an item:c")
     if pressed == '1':
         register_view()
     elif pressed == '2':
@@ -89,28 +92,53 @@ def menu_view():
     else:
         exit()
 
-# TODO
-def logged_menu():
+#TODO
+def shop_view():
+    global manager
     clear_screen()
-    print(f"-------{manager.current_user.login}\n1. Shop\n2. Sign In\n3. Exit")
+    print(f"-------Shop ({manager.current_user.login})")
+    products = [product for product in manager.read_products() if product.amount > 0]
+    values = [str(x) for x in range(len(products)+2)]
+    for i in range(len(products)):
+        print(f"{values[i]}. {products[i]}")
+    print(f"{values[-2]}. Confirm")
+    print(f"{values[-1]}. Exit")
+    pressed = None
+    while pressed is None:
+        pressed = input()
+        if pressed not in values:
+            pressed = None
+            print("No such an item:c")
+
+def orders_view():
+    pass
+
+def cart_view():
+    pass
+
+
+def logged_menu():
+    global manager
+    clear_screen()
+    print(f"-------Menu ({manager.current_user.login})\n1. Shop\n2. My Orders\n3.  Cart")
     values = ['1', '2', '3']
     pressed = None
     while pressed is None:
         pressed = input()
+        if pressed not in values:
+            pressed = None
+            print("No such an item:c")
     if pressed == '1':
-        register_view()
+        shop_view()
     elif pressed == '2':
-        login_view()
+        orders_view()
     else:
-        exit()
+        cart_view()
+
 
 def main():
     global manager
     manager = Manager()
-    product = manager.read_products()[-2]
-    product.name = "Kashtani"
-    product.amount = 12
-    manager.save_record(product)
-    #menu_view()
+    menu_view()
 
 main()
