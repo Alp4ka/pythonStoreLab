@@ -1,4 +1,5 @@
 from Manager import Manager
+from Models.Order import OrderStatus
 import os
 import Models
 from Utils import *
@@ -94,8 +95,8 @@ def menu_view():
 
 
 def shop_view():
+    global manager
     while True:
-        global manager
         clear_screen()
         print(f"-------Shop ({manager.current_user.login})")
         products = [product for product in manager.read_products() if product.amount > 0]
@@ -127,11 +128,117 @@ def shop_view():
 
 
 def orders_view():
-    pass
+    global manager
+    clear_screen()
+    print(f"-------My Orders ({manager.current_user.login})")
+    print("HINT: press a number of order you want to observe.")
+    my_orders = manager.current_user.get_orders()
+    values = [str(x) for x in range(len(my_orders) + 1)]
+    for i in range(len(my_orders)):
+        print(f"{values[i]}. {my_orders[i]}")
+    print(f"{values[-1]}. Exit")
+    pressed = None
+    while pressed is None:
+        pressed = input()
+        if pressed not in values:
+            pressed = None
+            print("No such an item:c")
+    pressed = int(pressed)
+    if pressed == len(my_orders):
+        logged_menu()
+    else:
+        order_chosen = my_orders[pressed]
+        order_view(order_chosen)
+
+
+# TODO
+def order_view(order):
+    while True:
+        global manager
+        clear_screen()
+        print(f"-------Order #{order.id}")
+        print("HINT: input number of product and '-'/'+' to select whether you want to remove or add a product.")
+        print("EXAMPLE: 1 +")
+        products = order.products
+        values = [str(x) for x in range(len(products) + 1)]
+        for i in range(len(products)):
+            print(f"{values[i]}. {products[i]}")
+        print(f"{values[-1]}. Exit")
+        pressed = None
+        action = None
+        while pressed is None:
+            data = input().split()
+            pressed = data[0]
+            if pressed not in values:
+                pressed = None
+                print("No such an item:c")
+            elif pressed != values[-1]:
+                if len(data) != 2:
+                    pressed = None
+                    print("I need two arguments:c")
+                else:
+                    if data[1]  in ['+', '-']:
+                        action = data[1]
+                    else:
+                        pressed = None
+                        print("Wrong action:c")
+
+        pressed = int(pressed)
+        if pressed == len(products):
+            orders_view()
+        else:
+            if order.status == OrderStatus.NEW:
+                chosen_product = products[pressed]
+                if action == '+':
+                    order.add_product(chosen_product)
+                    print(f"{chosen_product} added!")
+                else:
+                    if len(order.products) == 1:
+                        print("Zakaz uzhe sdelan. Plati shekeli:c")
+                        continue
+                    order.remove_product(chosen_product)
+                    print(f"{chosen_product} removed!")
+
+
+                manager.save_record(order)
+
+            else:
+                print("You can't edit this order:c")
+                input("<'Enter' to continue>")
 
 
 def cart_view():
-    pass
+    global manager
+    while True:
+        clear_screen()
+        print(f"-------My Cart ({manager.current_user.login})")
+        print("HINT: press a number of product you want to remove from cart.")
+        my_products = manager.current_user.cart.convert()
+        values = [str(x) for x in range(len(my_products) + 2)]
+        for i in range(len(my_products)):
+            print(f"{values[i]}. {my_products[i]}")
+        print(f"{values[-2]}. Confirm")
+        print(f"{values[-1]}. Exit")
+        pressed = None
+        while pressed is None:
+            pressed = input()
+            if pressed not in values:
+                pressed = None
+                print("No such an item:c")
+        pressed = int(pressed)
+        if pressed == len(my_products)+1:
+            logged_menu()
+        elif pressed == len(my_products):
+            if manager.make_order():
+                print("Order confirmed!")
+            else:
+                print("Something went wrong:c")
+            input("<'Enter' to continue>")
+            logged_menu()
+        else:
+            product_chosen = my_products[pressed]
+            manager.remove_from_cart(product_chosen)
+            print(f"{product_chosen} removed from cart!")
 
 
 def logged_menu():

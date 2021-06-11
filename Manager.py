@@ -111,7 +111,7 @@ class Manager:
                         break
             converted = cart.convert()
             orders = Manager.read_orders()
-            today = datetime.datetime.today().strftime("%d.%m.%Y")
+            today = datetime.datetime.today()
             new_order= Order(id=len(orders)+1,
                              owner_login=self.current_user.login,
                              creation_date=today,
@@ -124,6 +124,10 @@ class Manager:
     def add_to_cart(self, product):
         if self.current_user is not None:
             self.current_user.cart.add_product(product)
+
+    def remove_from_cart(self, product):
+        if self.current_user is not None:
+            self.current_user.cart.remove_product(product)
 
     def login(self, login, password):
         users = Manager.read_users()
@@ -169,7 +173,7 @@ class Manager:
                 raise Exception("Strange password!")
 
     @staticmethod
-    def save_record(self, object):
+    def save_record(object):
         path = ""
         records = ""
         if isinstance(object, User):

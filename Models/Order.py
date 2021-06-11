@@ -1,5 +1,7 @@
 import copy
 from enum import IntEnum
+from Models.Product import Product
+import datetime
 
 
 class OrderStatus(IntEnum):
@@ -23,13 +25,14 @@ class Order:
             return True
         return False
 
-    #TODO
-    def add_product(self):
-        pass
+    def add_product(self, product):
+        self.products.append(product)
 
-    #TODO
-    def  remove_product(self):
-        pass
+    def remove_product(self, product):
+        for i in range(len(self.products)):
+            if Product.is_equal(self.products[i], product):
+                del self.products[i]
+                return
 
     def __str__(self):
         return f"###Order### Id: '{self.id}'. Owner: {self.owner}. Creation Date: '{self.creation_date}'. Status: '{self.status}'. Products: '{'|'.join(map(str, self.products))}'"
@@ -38,4 +41,4 @@ class Order:
         return self.__str__()
 
     def db_representation(self):
-        return f"{str(self.id)};{str(self.owner)};{str(self.creation_date)};{str(int(self.status))};{' '.join([str(x.id) for x in self.products])}"
+        return f"{str(self.id)};{str(self.owner)};{self.creation_date.strftime('%d.%m.%Y')};{str(int(self.status))};{' '.join([str(x.id) for x in self.products])}"
