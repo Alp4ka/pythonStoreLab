@@ -63,7 +63,7 @@ def login_view():
             print(ex)
             response = False
     print(f"Logged in as {manager.current_user}")
-    input("<Any key to continue>")
+    input("<'Enter' to continue>")
     logged_menu()
 
 
@@ -92,26 +92,43 @@ def menu_view():
     else:
         exit()
 
-#TODO
+
 def shop_view():
-    global manager
-    clear_screen()
-    print(f"-------Shop ({manager.current_user.login})")
-    products = [product for product in manager.read_products() if product.amount > 0]
-    values = [str(x) for x in range(len(products)+2)]
-    for i in range(len(products)):
-        print(f"{values[i]}. {products[i]}")
-    print(f"{values[-2]}. Confirm")
-    print(f"{values[-1]}. Exit")
-    pressed = None
-    while pressed is None:
-        pressed = input()
-        if pressed not in values:
-            pressed = None
-            print("No such an item:c")
+    while True:
+        global manager
+        clear_screen()
+        print(f"-------Shop ({manager.current_user.login})")
+        products = [product for product in manager.read_products() if product.amount > 0]
+        values = [str(x) for x in range(len(products)+2)]
+        for i in range(len(products)):
+            print(f"{values[i]}. {products[i]}")
+        print(f"{values[-2]}. Confirm")
+        print(f"{values[-1]}. Exit")
+        pressed = None
+        while pressed is None:
+            pressed = input()
+            if pressed not in values:
+                pressed = None
+                print("No such an item:c")
+        pressed = int(pressed)
+        if pressed == len(products)+1:
+            logged_menu()
+        elif pressed == len(products):
+            if manager.make_order():
+                print("Order confirmed!")
+            else:
+                print("Something went wrong:c")
+            input("<'Enter' to continue>")
+            logged_menu()
+        else:
+            product_chosen = products[pressed]
+            manager.add_to_cart(product_chosen)
+            print(f"{product_chosen} added to cart!")
+
 
 def orders_view():
     pass
+
 
 def cart_view():
     pass
@@ -120,8 +137,8 @@ def cart_view():
 def logged_menu():
     global manager
     clear_screen()
-    print(f"-------Menu ({manager.current_user.login})\n1. Shop\n2. My Orders\n3.  Cart")
-    values = ['1', '2', '3']
+    print(f"-------Menu ({manager.current_user.login})\n1. Shop\n2. My Orders\n3. Cart\n4. Exit")
+    values = ['1', '2', '3', '4']
     pressed = None
     while pressed is None:
         pressed = input()
@@ -132,8 +149,10 @@ def logged_menu():
         shop_view()
     elif pressed == '2':
         orders_view()
-    else:
+    elif pressed == '3':
         cart_view()
+    else:
+        exit()
 
 
 def main():

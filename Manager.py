@@ -92,6 +92,39 @@ class Manager:
         else:
             return None
 
+    def confirm_order(self, order):
+        # Уменьшить количество товара
+        pass
+
+    def make_order(self):
+        # Убедиться что товара на складе долстаочно
+        all_products = Manager.read_products()
+        if self.current_user is not None:
+            cart = self.current_user.cart
+            if len(cart.products.keys()) == 0 :
+                return False
+            for product_id, amount in cart.products.items():
+                for it in all_products:
+                    if it.id == product_id:
+                        if it.amount < amount:
+                            return False
+                        break
+            converted = cart.convert()
+            orders = Manager.read_orders()
+            today = datetime.datetime.today().strftime("%d.%m.%Y")
+            new_order= Order(id=len(orders)+1,
+                             owner_login=self.current_user.login,
+                             creation_date=today,
+                             status=OrderStatus.NEW,
+                             products=converted)
+            Manager.create_record(new_order)
+            self.current_user.cart = Cart(self.current_user.id)
+            return True
+
+    def add_to_cart(self, product):
+        if self.current_user is not None:
+            self.current_user.cart.add_product(product)
+
     def login(self, login, password):
         users = Manager.read_users()
         needed = [user for user in users if user.login == login]

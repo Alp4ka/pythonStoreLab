@@ -1,6 +1,7 @@
 import hashlib
 from Utils import *
 from Models.Order import OrderStatus
+from Models.Cart import Cart
 import Manager
 
 
@@ -10,6 +11,7 @@ class User:
         self.name = name
         self.login = login
         self.password = password
+        self.cart = Cart(id)
 
     def get_orders(self):
         orders = Manager.Manager.read_orders()
