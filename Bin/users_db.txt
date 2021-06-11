@@ -1,3 +1,4 @@
 1;Antoshka;Antoshka;25d55ad283aa400af464c76d713c07ad
 2;Andrei;kisame;3fc0a7acf087f549ac2b266baf94b8b1
 3;grizhkin;grizha;3fc0a7acf087f549ac2b266baf94b8b1
+4;artem;new_login;0192023a7bbd73250516f069df18b500

@@ -21,6 +21,7 @@ def register_view():
             login = login.strip()
             if len(login) < 3:
                 print("I need more than 3 symbols!")
+                input("<'Enter' to continue>")
             else:
                 break
         name = ""
@@ -29,6 +30,7 @@ def register_view():
             name = name.strip()
             if len(name) < 3:
                 print("I need more than 3 symbols!")
+                input("<'Enter' to continue>")
             else:
                 break
         password = ""
@@ -37,6 +39,7 @@ def register_view():
             password = password.strip()
             if not Models.User.check_password(password):
                 print("I need more than 7 symbols!")
+                input("<'Enter' to continue>")
             else:
                 break
         try:
@@ -44,6 +47,7 @@ def register_view():
         except Exception as ex:
             print(ex)
             response = False
+            input("<'Enter' to continue>")
     menu_view()
 
 
@@ -63,6 +67,7 @@ def login_view():
         except Exception as ex:
             print(ex)
             response = False
+            input("<'Enter' to continue>")
     print(f"Logged in as {manager.current_user}")
     input("<'Enter' to continue>")
     logged_menu()
@@ -77,21 +82,23 @@ def clear_screen():
 
 
 def menu_view():
-    clear_screen()
-    print("-------Main Menu\n1. Sign Up\n2. Sign In\n3. Exit")
-    values = ['1', '2', '3']
-    pressed = None
-    while pressed is None:
-        pressed = input()
-        if pressed not in values:
-            pressed = None
-            print("No such an item:c")
-    if pressed == '1':
-        register_view()
-    elif pressed == '2':
-        login_view()
-    else:
-        exit()
+    while True:
+        clear_screen()
+        print("-------Main Menu\n1. Sign Up\n2. Sign In\n3. Exit")
+        values = ['1', '2', '3']
+        pressed = None
+        while pressed is None:
+            pressed = input()
+            if pressed not in values:
+                pressed = None
+                print("No such an item:c")
+                input("<'Enter' to continue>")
+        if pressed == '1':
+            register_view()
+        elif pressed == '2':
+            login_view()
+        else:
+            exit()
 
 
 def shop_view():
@@ -111,6 +118,7 @@ def shop_view():
             if pressed not in values:
                 pressed = None
                 print("No such an item:c")
+                input("<'Enter' to continue>")
         pressed = int(pressed)
         if pressed == len(products)+1:
             logged_menu()
@@ -125,6 +133,7 @@ def shop_view():
             product_chosen = products[pressed]
             manager.add_to_cart(product_chosen)
             print(f"{product_chosen} added to cart!")
+            input("<'Enter' to continue>")
 
 
 def orders_view():
@@ -143,6 +152,7 @@ def orders_view():
         if pressed not in values:
             pressed = None
             print("No such an item:c")
+            input("<'Enter' to continue>")
     pressed = int(pressed)
     if pressed == len(my_orders):
         logged_menu()
@@ -172,16 +182,19 @@ def order_view(order):
             if pressed not in values:
                 pressed = None
                 print("No such an item:c")
+                input("<'Enter' to continue>")
             elif pressed != values[-1]:
                 if len(data) != 2:
                     pressed = None
                     print("I need two arguments:c")
+                    input("<'Enter' to continue>")
                 else:
                     if data[1]  in ['+', '-']:
                         action = data[1]
                     else:
                         pressed = None
                         print("Wrong action:c")
+                        input("<'Enter' to continue>")
 
         pressed = int(pressed)
         if pressed == len(products):
@@ -192,12 +205,15 @@ def order_view(order):
                 if action == '+':
                     order.add_product(chosen_product)
                     print(f"{chosen_product} added!")
+                    input("<'Enter' to continue>")
                 else:
                     if len(order.products) == 1:
                         print("Zakaz uzhe sdelan. Plati shekeli:c")
+                        input("<'Enter' to continue>")
                         continue
                     order.remove_product(chosen_product)
                     print(f"{chosen_product} removed!")
+                    input("<'Enter' to continue>")
 
 
                 manager.save_record(order)
@@ -225,6 +241,7 @@ def cart_view():
             if pressed not in values:
                 pressed = None
                 print("No such an item:c")
+                input("<'Enter' to continue>")
         pressed = int(pressed)
         if pressed == len(my_products)+1:
             logged_menu()
