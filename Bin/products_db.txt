@@ -1,5 +1,4 @@
-1;Simple Dimple;270;2
-2;Pop-it;110;12
-3;Spinner;170;7
-3;Squish;90;4
-4;Uvazhenie soziuma;100000;1
+1;Simple Dimple;270.0;3
+2;Pop-it;110.0;9
+3;Squish;90.0;2
+4;Uvazhenie soziuma;1.0;228

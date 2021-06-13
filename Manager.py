@@ -50,7 +50,7 @@ class Manager:
         else:
             id = int(splitted[0])
             name = splitted[1]
-            price = int(splitted[2])
+            price = float(splitted[2])
             amount = int(splitted[3])
             return Product(id, name, price, amount)
 
@@ -76,8 +76,7 @@ class Manager:
         else:
             id = int(splitted[0])
             owner = splitted[1]
-            creation_date = datetime.datetime.strptime(splitted[2],
-                                                       "%d.%m.%Y").date()
+            creation_date = datetime.datetime.strptime(splitted[2], "%d.%m.%Y").date()
             status = OrderStatus(int(splitted[3]))
             products = [Manager.product_from_id(int(product))
                         for product in splitted[4].split()]
@@ -92,9 +91,38 @@ class Manager:
         else:
             return None
 
-    def confirm_order(self, order):
-        # Уменьшить количество товара
-        pass
+    def pay_order(self, order):
+        order_products = order.products
+        if self.check_decrease_ability(order_products):
+            self.decrease_products(order_products)
+            order.status = OrderStatus.PAID
+            self.save_record(order)
+            return True
+        else:
+            return False
+
+    def decrease_products(self, order_products):
+        storage_products = Manager.read_products()
+        d = pList_to_dict(order_products)
+        for sproduct in storage_products:
+            if sproduct.id in d.keys():
+                if d[sproduct.id] <= sproduct.amount:
+                    sproduct.amount -= d[sproduct.id]
+                    self.save_record(sproduct)
+
+    def check_decrease_ability(self, order_products):
+        storage_products = Manager.read_products()
+        d = pList_to_dict(order_products)
+        for sproduct in storage_products:
+            if sproduct.id in d.keys():
+                if d[sproduct.id] > sproduct.amount:
+                    return False
+
+        return True
+
+
+
+
 
     def make_order(self):
         # Убедиться что товара на складе долстаочно

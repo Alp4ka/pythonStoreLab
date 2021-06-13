@@ -12,10 +12,10 @@ class Product:
         return False
 
     def __str__(self):
-        return f"###Product### Id: {self.id}. Name: '{self.name}'. Price: '{self.price}''"
+        return f"###Product### Id: {self.id}. Name: '{self.name}'. Price: '{self.price} RUB''"
 
     def __repr__(self):
-        return self.__str__()
+        return f"{self.__str__()}. Amount: '{self.amount}'"
 
     def db_representation(self):
         return f"{self.id};{self.name};{self.price};{self.amount}"

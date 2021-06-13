@@ -10,6 +10,19 @@ class OrderStatus(IntEnum):
     SENT = 3
     DELIVERED = 4
 
+    @staticmethod
+    def to_string(status):
+        if status == OrderStatus.NEW:
+            return "NEW"
+        elif status == OrderStatus.PAID:
+            return "PAID"
+        elif status == OrderStatus.SENT:
+            return "SENT"
+        elif status == OrderStatus.DELIVERED:
+            return "DELIVERED"
+        else:
+            return None
+
 
 class Order:
     def __init__(self, id, owner_login, creation_date, status, products):
@@ -34,8 +47,18 @@ class Order:
                 del self.products[i]
                 return
 
+    def change_status_to(self, new_status):
+        if int(new_status) - int(self.status) == 1 and self.status != OrderStatus.NEW:
+            self.status = new_status
+            return True
+        else:
+            return False
+
+    def next_status(self):
+        return OrderStatus(int(self.status) + 1) if self.status != OrderStatus.DELIVERED else OrderStatus.DELIVERED
+
     def __str__(self):
-        return f"###Order### Id: '{self.id}'. Owner: {self.owner}. Creation Date: '{self.creation_date}'. Status: '{self.status}'. Products: '{'|'.join(map(str, self.products))}'"
+        return f"###Order### Id: '{self.id}'. Owner: {self.owner}. Creation Date: '{self.creation_date}'. Status: '{OrderStatus.to_string(self.status)}'. Products: '{'|'.join(map(str, self.products))}'"
 
     def __repr__(self):
         return self.__str__()

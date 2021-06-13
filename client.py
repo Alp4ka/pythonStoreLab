@@ -1,11 +1,9 @@
 from Manager import Manager
 from Models.Order import OrderStatus
-import os
 import Models
 from Utils import *
 
 
-operating_system = get_operating_system()
 manager = None
 
 
@@ -71,14 +69,6 @@ def login_view():
     print(f"Logged in as {manager.current_user}")
     input("<'Enter' to continue>")
     logged_menu()
-
-
-def clear_screen():
-    global operating_system
-    if operating_system == "windows":
-        os.system('cls')
-    else:
-        os.system('clear')
 
 
 def menu_view():
@@ -161,7 +151,6 @@ def orders_view():
         order_view(order_chosen)
 
 
-# TODO
 def order_view(order):
     while True:
         global manager
@@ -170,9 +159,14 @@ def order_view(order):
         print("HINT: input number of product and '-'/'+' to select whether you want to remove or add a product.")
         print("EXAMPLE: 1 +")
         products = order.products
-        values = [str(x) for x in range(len(products) + 1)]
+        keys = dict()
+
+        values = [str(x) for x in range(len(products) + 2)]
+
         for i in range(len(products)):
             print(f"{values[i]}. {products[i]}")
+
+        print(f"{values[-2]}. Pay")
         print(f"{values[-1]}. Exit")
         pressed = None
         action = None
@@ -183,7 +177,7 @@ def order_view(order):
                 pressed = None
                 print("No such an item:c")
                 input("<'Enter' to continue>")
-            elif pressed != values[-1]:
+            elif pressed != values[-1] and pressed != values[-2]:
                 if len(data) != 2:
                     pressed = None
                     print("I need two arguments:c")
@@ -197,8 +191,19 @@ def order_view(order):
                         input("<'Enter' to continue>")
 
         pressed = int(pressed)
-        if pressed == len(products):
+        if pressed == len(values) - 1:
             orders_view()
+        elif pressed == len(values) - 2:
+            if order.status == OrderStatus.NEW:
+                if manager.pay_order(order):
+                    print("Success!")
+                    input("<'Enter' to continue>")
+                else:
+                    print("Sorry. You are not able to pay for this order:( \nThere are no some products in out storage...")
+                    input("<'Enter' to continue>")
+            else:
+                print("Order is already paid!")
+                input("<'Enter' to continue>")
         else:
             if order.status == OrderStatus.NEW:
                 chosen_product = products[pressed]
@@ -214,8 +219,6 @@ def order_view(order):
                     order.remove_product(chosen_product)
                     print(f"{chosen_product} removed!")
                     input("<'Enter' to continue>")
-
-
                 manager.save_record(order)
 
             else:
